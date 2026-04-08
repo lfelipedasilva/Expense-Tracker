@@ -16,7 +16,7 @@ public class ExpenseTrackService {
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(doc, true))) {
 
             try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
-                String linha = "";
+                String linha;
                 while ((linha = br.readLine()) != null) {
                     String[] partes = linha.split(",");
                     hashSet.add(Integer.valueOf(partes[0]));
@@ -36,4 +36,23 @@ public class ExpenseTrackService {
 
 
     }
+
+    public void listExpenses() {
+        try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
+            String linha;
+            System.out.println("ID    DATE     DESCRIPTION     AMOUNT");
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(",");
+                System.out.println(partes[0] + " " + partes[1] + " " + partes[2] + " " + partes[3]);
+
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 }
