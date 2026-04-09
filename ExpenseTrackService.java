@@ -1,6 +1,7 @@
 package ExpenseTracker;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.HashSet;
 
 public class ExpenseTrackService {
@@ -16,15 +17,15 @@ public class ExpenseTrackService {
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(doc, true))) {
 
             try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
-                String linha;
-                while ((linha = br.readLine()) != null) {
-                    String[] partes = linha.split(",");
-                    hashSet.add(Integer.valueOf(partes[0]));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] split = line.split(",");
+                    hashSet.add(Integer.valueOf(split[0]));
                 }
             }
 
             if (hashSet.contains(expense.getId())) {
-                System.out.println("An expense with this ID already exists!");
+                throw new RuntimeException("An expense with this ID already exists!");
             } else {
                 bf.write(expense.toString());
                 bf.newLine();
@@ -39,11 +40,11 @@ public class ExpenseTrackService {
 
     public void listExpenses() {
         try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
-            String linha;
-            System.out.println("ID    DATE     DESCRIPTION     AMOUNT");
-            while ((linha = br.readLine()) != null) {
-                String[] partes = linha.split(",");
-                System.out.println(partes[0] + " " + partes[1] + " " + partes[2] + " " + partes[3]);
+            String line;
+            System.out.println("ID  |  DATE  |   DESCRIPTION   |  AMOUNT");
+            while ((line = br.readLine()) != null) {
+                String[] split = line.split(",");
+                System.out.println(split[0] + " |  " + split[1] + " |  " + split[2] + " |  " + split[3]);
 
             }
 
@@ -53,6 +54,37 @@ public class ExpenseTrackService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public Double summary() {
+        try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
+            String line;
+            Double total = 0.0;
+            while ((line = br.readLine()) != null) {
+                String[] split = line.split(",");
+                total += Double.valueOf(split[3]);
+            }
+            return total;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Double summary(int month) {
+        try(BufferedReader br = new BufferedReader(new FileReader(doc))) {
+            String line;
+            Double total = 0.0;
+            while ((line = br.readLine()) != null) {
+                String[] split = line.split(",");
+                LocalDate tempDate = LocalDate.parse(split[1]);
+                if (tempDate.getMonthValue() == month) {
+                    total += Double.valueOf(split[3]);
+                }
+            }
+            return total;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
